@@ -38,20 +38,20 @@ function plug() {
 
     local git_ref="$2"
     if [ ! -d "$plugin_dir" ]; then
-        echo "🔌 Zap is installing $plugin_name..."
-        git clone --depth 1 "${ZAP_GIT_PREFIX:-"https://github.com/"}${plugin}.git" "$plugin_dir" > /dev/null 2>&1 || { echo -e "\e[1A\e[K❌ Failed to clone $plugin_name"; return 12 }
+        echo "󰚥 Zap is installing $plugin_name..."
+        git clone --depth 1 "${ZAP_GIT_PREFIX:-"https://github.com/"}${plugin}.git" "$plugin_dir" > /dev/null 2>&1 || { echo -e "\e[1A\e[K Failed to clone $plugin_name"; return 12 }
         echo -e "\e[1A\e[K⚡ Zap installed $plugin_name"
     fi
     [[ -n "$git_ref" ]] && {
         git -C "$plugin_dir" pull --unshallow > /dev/null 2>&1
-        git -C "$plugin_dir" checkout "$git_ref" > /dev/null 2>&1 || { echo "❌ Failed to checkout $git_ref"; return 13 }
+        git -C "$plugin_dir" checkout "$git_ref" > /dev/null 2>&1 || { echo " Failed to checkout $git_ref"; return 13 }
     }
-    _try_source && { ZAP_INSTALLED_PLUGINS+="$plugin_name" && return 0 } || echo "❌ $plugin_name not activated" && return 1
+    _try_source && { ZAP_INSTALLED_PLUGINS+="$plugin_name" && return 0 } || echo " $plugin_name not activated" && return 1
 }
 
 function _pull() {
-    echo "🔌 updating ${1:t}..."
-    git -C $1 pull > /dev/null 2>&1 && { echo -e "\e[1A\e[K⚡ ${1:t} updated!"; return 0 } || { echo -e "\e[1A\e[K❌ Failed to pull"; return 14 }
+    echo "󰚥 updating ${1:t}..."
+    git -C $1 pull > /dev/null 2>&1 && { echo -e "\e[1A\e[K⚡ ${1:t} updated!"; return 0 } || { echo -e "\e[1A\e[K Failed to pull"; return 14 }
 }
 
 function _zap_clean() {
@@ -72,7 +72,7 @@ function _zap_list() {
     local _plugin
     echo "⚡ Zap - List\n"
     for _plugin in ${ZAP_INSTALLED_PLUGINS[@]}; do
-        printf '%4s  🔌 %s\n' $ZAP_INSTALLED_PLUGINS[(Ie)$_plugin] $_plugin
+        printf '%4s  󰚥 %s\n' $ZAP_INSTALLED_PLUGINS[(Ie)$_plugin] $_plugin
     done
 }
 
@@ -111,14 +111,14 @@ function _zap_update() {
     printf '   0 ⚡ Zap (%b)\n' "$_status"
     for _plugin in ${ZAP_INSTALLED_PLUGINS[@]}; do
         _check "$ZAP_PLUGIN_DIR/$_plugin"
-        printf '%4s 🔌 %s (%b)\n' $ZAP_INSTALLED_PLUGINS[(Ie)$_plugin] $_plugin $_status
+        printf '%4s 󰚥 %s (%b)\n' $ZAP_INSTALLED_PLUGINS[(Ie)$_plugin] $_plugin $_status
     done
-    echo -n "\n  🔌 Plugin Number | (0) ⚡ Zap Itself | (a) All Plugins | (⏎) Abort: " && read _plugin
+    echo -n "\n  󰚥 Plugin Number | (0) ⚡ Zap Itself | (a) All Plugins | (⏎) Abort: " && read _plugin
     case $_plugin in
         [[:digit:]]*)
-            [[ $_plugin -gt ${#ZAP_INSTALLED_PLUGINS[@]} ]] && { echo "❌ Invalid option" && return 1 }
+            [[ $_plugin -gt ${#ZAP_INSTALLED_PLUGINS[@]} ]] && { echo " Invalid option" && return 1 }
             [[ $_plugin -eq 0 ]] && {
-                git -C "$ZAP_DIR" pull &> /dev/null && { echo -e "\e[1A\e[K⚡ Zap updated!"; return 0 } || { echo -e "\e[1A\e[K❌ Failed to pull"; return 14 }
+                git -C "$ZAP_DIR" pull &> /dev/null && { echo -e "\e[1A\e[K⚡ Zap updated!"; return 0 } || { echo -e "\e[1A\e[K Failed to pull"; return 14 }
             } || { _pull "$ZAP_PLUGIN_DIR/$ZAP_INSTALLED_PLUGINS[$_plugin]" } ;;
         'a'|'A')
             echo "\nUpdating All Plugins\n"
